@@ -1,0 +1,332 @@
+Teme za prvi projekat iz Sistemskog programiranja
+Napomene za izradu projekta:
+Implementirati serversku aplikaciju kao konzolni program u programskom jeziku C# koja obrađuje
+zahteve klijenata i generiše odgovore na osnovu pristupa deljenim resursima. Sistem mora podržati
+istovremeni rad sa većim brojem zahteva, pri čemu se prijem i obrada zahteva izvršavaju
+konkurentno.
+Arhitektura sistema treba da bude zasnovana na razdvajanju prijema i obrade zahteva. Pristigli
+zahtevi se smeštaju u deljenu strukturu podataka, dok njihovu obradu vrši skup niti korišćenjem
+ThreadPool-a ili sopstvene implementacije. Broj paralelnih obrada mora biti kontrolisan.
+Sinhronizacija između niti mora biti blokirajuća i realizovana korišćenjem mehanizama iz prostora
+imena System.Threading, uključujući lock/Monitor i Monitor.Wait/Monitor.Pulse.
+Sistem treba da koristi zajedničke resurse (npr. memoriju, fajlove ili druge izvore podataka) koji
+su dostupni svim nitima, pri čemu je neophodno obezbediti njihov thread-safe pristup. Poseban
+akcenat staviti na pravilno upravljanje kritičnim sekcijama i izbegavanje problema konkurentnog
+pristupa.
+U okviru sistema potrebno je implementirati mehanizam keširanja koji omogućava ponovno
+korišćenje prethodno pribavljenih rezultata. Keš mora biti thread-safe i podržavati definisanu
+strategiju upravljanja (vremensko isticanje ili ograničenje veličine). U slučaju istovremenih
+zahteva za istim resursom, obrada treba da se izvrši samo jednom, dok ostale niti čekaju na rezultat
+(problem poznat kao cache stampede). Koristiti strategiju upravljanja koja je data uz konkretnu
+temu.vre
+Sistem mora da vodi evidenciju o obradi zahteva i stanju sistema. Logovanje mora biti realizovano
+na thread-safe način. Takođe je potrebno obezbediti odgovarajuću obradu grešaka i stabilno
+ponašanje sistema u uslovima većeg opterećenja.
+U okviru projekta potrebno je analizirati korišćene mehanizme sinhronizacije, identifikovati
+kritične sekcije i razmotriti ponašanje sistema pri različitim nivoima konkurentnog opterećenja
+(naročito u situacijama sa velikim brojem paralelnih zahteva).
+Predaja projekata:
+Rezultate projekta treba predati u obliku Visual Studio projekta (moguće je koristiti i druge editore)
+koji je postavljen na GitHub repozitorijumu (voditi računa o tome da repozitorujum bude javan).
+Rezultate projekta možete predati korišćenjem foruma na sajtu predmeta.
+Preporuka:
+Za testiranje API-a je moguće koristiti Postman alat. Biblioteke navedene u opisu konkretnih
+zadataka su date kao preporuka (mogu se koristiti i druge ako je potrebno).
+Zadatak 1:
+Kreirati Web server koji klijentu omogućava pribavljanje Excel fajla. Svi fajlovi na serveru su
+CSV fajlovi koje je prilikom zahteva potrebno konvertovati u Excel fajl. Svi zahtevi serveru se
+šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla.
+Ukoliko navedeni fajl ne postoji, prikazati grešku korisniku. Za kreiranje Excel fajlova je moguće
+koristiti NPOI biblioteku ili ExcelDataReader (biblioteke je moguće instalirati korišćenjem NuGet
+package managera).
+Primer poziva serveru: http://localhost:5050/primer1.csv
+Način funkcionisanja ExcelDataReader biblioteke je moguće proučiti na sledećem linku:
+https://github.com/ExcelDataReader/ExcelDataReader
+Zadatak 2:
+Kreirati Web server koji klijentima preko browser-a omogućava pretraživanje reči u tekstualnim
+fajlovima. Svi zahtevi serveru se šalju preko browser-a korišćenjem GET metode. U zahtevu se
+kao parametri navode reči za koje se vrši pretraga. Kao odgovor klijentu, server šalje rezultat
+pretrage u html obliku, gde su prikazani nazivi fajlova koji sadrže tražene reči i broj pojavljivanja
+reči u fajlovima. Pretragu vršiti samo za fajlove koji se nalaze u root direktorijumu servera.
+Primer poziva serveru: http://localhost:5050/sistemsko&programiranje&elfak&projekat
+Zadatak 3:
+Kreirati Web server koji klijentu za zahtevane fajlove kreira zip arhivu i vraća je klijentu. Svi
+zahtevi serveru se šalji preko browser-a korišćenjem GET metode. U zahtevu se kao parametri
+navode nazivi fajlova za koje treba da se kreira zip arhiva. Ukoliko neki od navedenih fajlova ne
+postoji na serveru, ostali fajlovi se arhiviraju. Ukoliko ne postoji ni jedan zahtevani fajl na serveru,
+klijentu se prikazuje poruka. Za kreiranje zip arhive koristiit biblioteku SharpZipLib (biblioteku
+je moguće instalirati korišćenjem NuGet package managera). Pored pomenute biblioteke, moguće
+je koristiti SharpCompress biblioteku.
+Primer poziva serveru: http://localhost:5050/test1.txt&test2.txt&test3.txt
+Zadatak 4:
+Kreirati Web server koji klijentu omogućava pretraživanje pesama uz pomoć Deezer API-a.
+Pretraga pesama se može vršiti pomoću Advanced search opcije objašnjene u okviru
+dokumentacije (https://developers.deezer.com/api/search). Spisak pesama koje zadovoljavaju
+kriterijum se vraćaju kao odgovor klijentu. Svi zahtevi serveru se šalji preko browser-a
+korišćenjem GET metode. Ukoliko navedena pesma ne postoji, prikazati grešku klijentu.
+Primer poziva servera: https://api.deezer.com/search?q=artist:"coldplay"
+NAPOMENA: Moguće je koristiti i drugačije pozive ukoliko se za kriterijum pretrage ne unosi
+samo izvođač.
+Zadatak 5:
+Kreirati Web server koji klijentima preko browser-a omogućava pretraživanje naziva fajlova po
+ključnoj reči. Svi zahtevi serveru se šalju preko browser-a korišćenjem GET metode. U zahtevu se
+kao parametar navodi ključna reč po kojoj se vrši pretraga fajlova. Kao odgovor klijentu, server
+šalje spisak fajlova koji zadovoljavaju kriterijum pretrage, i koji se mogu download-ovati sa
+servera. Pretragu vršiti samo za fajlove koji se nalaze u root direktorijumu servera. Ukoliko ni
+jedan fajl ne zadovoljava kriterijum pretrage, prikazati poruku klijentu.
+Primer poziva serveru: http://localhost:5050/dotnet
+NAPOMENA: Odgovor servera o dostupnim fajlovima se kreira kao html, gde se naziv svakog
+fajla definiše kao <a> element u okviru kog je atribut href definisan kao GET poziv serveru u
+sledećem obliku http://localhost:5050/naziv_fajla.ekstenzija
+Zadatak 6:
+Kreirati Web server koji klijentima preko browser-a nudi listu fajlova koje mogu da download-
+uju. Fajl se download-uje izborom iz liste ponuđenih fajlova. Prikazati samo listu fajlova koji se
+nalaze u root direktorijumu servera.
+POMOĆ: Odgovor servera o dostupnim fajlovima se kreira kao html dokument, gde se naziv
+svakog fajla definiše kao <a>ime_fajla</a> u okviru kog je atribut href definisan kao GET poziv
+serveru u sledećem obliku: http://localhost:5050/naziv_fajla.ekstenzija.
+Zadatak 7:
+Kreirati Web server koji klijentu omogućava pribavljanje slike. Svi zahtevi serveru se šalji preko
+browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla. Ukoliko
+tražena slika ne postoji ili je zahtevan drugi tip fajla, prikazati poruku klijentu. Pretragu slika
+izvršiti po root folderu servera i svim njegovim podfolderima.
+Primer poziva serveru: http://localhost:5050/srbija.png
+Zadatak 8:
+Kreirati Web server koji vrši konverziju iz binarnog u tekstualni fajl i obratno. Svi zahtevi serveru
+se šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla.
+Server prihvata zahtev, pretražuje root folder za zahtevani fajl i vrši konverziju. Ukoliko traženi
+fajl ne postoji, vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/test.txt
+Zadatak 9:
+Kreirati Web server koji klijentu omogućava pretraživanje pesama uz pomoć Spotify API-a.
+Pretraga pesama se može vršiti pomoću filtera koji se definišu u okviru query-a. Spisak pesama
+koje zadovoljavaju kriterijum se vraćaju kao odgovor klijentu (umesto spiska pesama je moguće
+vratiti spisak albuma). Svi zahtevi serveru se šalju preko browser-a korišćenjem GET metode.
+Ukoliko navedena pesma ne postoji, prikazati grešku klijentu.
+Način funkcionisanja Spotify API- a je moguće proučiti na sledećem linku:
+https://developer.spotify.com/documentation/web- api/reference/search
+Primer poziva serveru:
+https://api.spotify.com/v1/search?q=Taylor+Swift&type=album&limit=5&access_token=token
+Zadatak 10:
+Kreirati Web server koji klijentu omogućava pribavljanje gifova. Svi zahtevi serveru se šalju preko
+browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla, odnosno
+traženog gifa. Ukoliko traženi gif ne postoji, prikazati poruku klijentu. Pretragu gifa izvršiti po
+root folderu servera i svim njegovim podfolderima.
+Primer poziva serveru: http://localhost:5050/panda.png
+Zadatak 11:
+Kreirati Web server koji vrši konverziju slike iz RGB formata u crno-beli. Svi zahtevi serveru se
+šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla,
+odnosno slike. Server prihvata zahtev, pretražuje root folder za zahtevani fajl i vrši konverziju.
+Ukoliko traženi fajl ne postoji, vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/test.jpg
+Zadatak 12:
+Kreirati Web server koji vrši kriptovanje fajla. Za proces kriptovanja se može koristiti SHA256 iz
+System.Security.Cryptography. Alterantivno, moguće je koristiti SharpHash biblioteku.
+(biblioteku je moguće instalirati korišćenjem NuGet package managera). Svi zahtevi serveru se
+šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla.
+Server prihvata zahtev, pretražuje root folder za zahtevani fajl i vrši kriptovanje. Ukoliko traženi
+fajl ne postoji, vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 13:
+Kreirati Web server koji vrši brojanje reči u okviru fajla. Brojati samo reči koje počinju velikim
+slovom i sadrže više od 5 slova. Svi zahtevi serveru se šalju preko browser-a korišćenjem GET
+metode. U zahtevu se kao parametar navodi naziv fajla. Server prihvata zahtev, pretražuje root
+folder i sve njegove podfoldere za zahtevani fajl i vrši brojanje. Ukoliko traženi fajl ne postoji,
+vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 14:
+Kreirati Web server koji vrši konverziju slike u gif format. Za proces konverzije se može koristiti
+ImageSharp (biblioteku je moguće instalirati korišćenjem NuGet package managera). Gif kreirati
+na osnovu iste slike promenom boje za različite frejmove (frejmovi gifa su varijacije slike u drugoj
+boji). Osim pomenute, moguće je koristiti i druge biblioteke. Svi zahtevi serveru se šalju preko
+browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla, odnosno slike.
+Server prihvata zahtev, pretražuje root folder za zahtevani fajl i vrši konverziju. Ukoliko traženi
+fajl ne postoji, vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/slika.png
+Zadatak 15:
+Kreirati Web server koji klijentu omogućava prikaz vremenske prognoze uz pomoć WeatherAPI-
+a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru query-a. Vremenska prognoza,
+kao i podaci o kvalitetu vazduha se vraćaju kao odgovor klijentu (podaci o kvalitetu vazduha su
+dostupni korišćenjem aqi parametra). Svi zahtevi serveru se šalju preko browser-a korišćenjem
+GET metode. Ukoliko navedena prognoza ne postoji, prikazati grešku klijentu.
+Primer poziva serveru:
+http://api.weatherapi.com/v1/current.json?key=&q=London&aqi=no
+Način funkcionisanja WeatherAPI-a je moguće proučiti na sledećem linku:
+https://www.weatherapi.com/docs/
+Zadatak 16:
+Kreirati Web server koji klijentu omogućava pretragu filmova uz pomoć TMDB API-a. Pretraga
+se može vršiti pomoću filtera koji se definišu u okviru query-a. Spisak filmova koji zadovoljavaju
+kriterijum se vraćaju kao odgovor. Svi zahtevi serveru se šalju preko browser-a korišćenjem GET
+metode. Ukoliko navedeni filmovi ne postoje, prikazati odgovarajuću poruku klijentu.
+Primer poziva serveru:
+https://api.themoviedb.org/3/search/movie?query=Jack+Sparrow&api_key=API_KEY
+Način funkcionisanja TMDB API-a je moguće proučiti na sledećem linku:
+https://developer.themoviedb.org/docs/getting-started
+Zadatak 17:
+Kreirati Web server koji klijentu omogućava pretragu članaka korišćenjem New York Times API-
+a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru query-a. Spisak članaka koji
+zadovoljavaju uslov se vraćaju kao odgovor klijentu (pretragu članaka vršiti po ključnoj reči). Svi
+zahtevi serveru se šalju preko browser-a korišćenjem GET metode. Ukoliko navedeni rezultati ne
+postoje, prikazati grešku klijentu.
+Primer poziva serveru: https://api.nytimes.com/svc/search/v2/articlesearch.json?q="climate
+change"&api-key={api-key}
+Način funkcionisanja New York Times API-a je moguće proučiti na sledećem linku:
+https://developer.nytimes.com/
+Zadatak 18:
+Kreirati Web server koji klijentu omogućava pretragu umetničkih dela korišćenjem Art Institute of
+Chicago API-a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru query-a. Spisak
+umetničkih dela koje zadovoljavaju uslov se vraćaju kao odgovor klijentu (pretragu vršiti po autoru
+ili korišćenjem Full Text search opcije). Svi zahtevi serveru se šalju preko browser-a korišćenjem
+GET metode. Ukoliko navedena umetnička dela ne postoje, prikazati grešku klijentu.
+Primer poziva serveru: https://api.artic.edu/api/v1/artworks/search?q=cats
+Način funkcionisanja Art Institute of Chicago API-a je moguće proučiti na sledećem linku:
+https://api.artic.edu/docs/#introduction
+Zadatak 19:
+Kreirati Web server koji klijentu omogućava pretragu umetničkih dela korišćenjem Metropolitan
+Museum of Art Collection API-a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru
+query-a. Spisak umetničkih dela koje zadovoljavaju uslov se vraćaju kao odgovor klijentu. Svi
+zahtevi serveru se šalju preko browser-a korišćenjem GET metode. Ukoliko navedena umetnička
+dela ne postoje, prikazati grešku klijentu.
+Način funkcionisanja Metropolitan Museum of Art Collection API-a je moguće proučiti na
+sledećem linku: https://metmuseum.github.io/
+Primer poziva serveru:
+https://collectionapi.metmuseum.org/public/collection/v1/search?q=sunflowers
+Zadatak 20:
+Kreirati Web server koji klijentu omogućava prikaz vrednosti zagađenja vazduha uz pomoć IQ Air
+API-a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru query-a. Vrednosti
+zagađenja vazduha se vraćaju kao odgovor (pretragu vršiti po gradu). Svi zahtevi serveru se šalju
+preko browser-a korišćenjem GET metode. Ukoliko navedene vrednosti zagađenja ne postoje,
+prikazati grešku klijentu.
+Način funkcionisanja IQ Air API-a je moguće proučiti na sledećem linku: https://api-
+docs.iqair.com/?version=latest
+Primer poziva serveru:
+http://api.airvisual.com/v2/city?city=LosAngeles&state=California&country=USA&key={{YO
+UR_API_KEY}}
+Zadatak 21:
+Kreirati Web server koji vrši konverziju slike iz JPG formata u PNG. Svi zahtevi serveru se šalju
+preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla,
+odnosno slike. Server prihvata zahtev, pretražuje root folder za zahtevani fajl i vrši konverziju.
+Ukoliko traženi fajl ne postoji, vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/test.jpg
+Zadatak 22:
+Kreirati Web server koji vrši brojanje reči u okviru fajla. Brojati samo reči koje su palindromi. Svi
+zahtevi serveru se šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar
+navodi naziv fajla. Server prihvata zahtev, pretražuje root folder i sve njegove podfoldere za
+zahtevani fajl i vrši brojanje. Ukoliko traženi fajl ne postoji, vratiti grešku korisniku. Takođe,
+ukoliko nema reči koje su palindromi, vratiti odgovarajuću poruku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 23:
+Kreirati Web server koji klijentu omogućava pribavljanje podataka o ukupnom broju commitova
+od strane svih contributore-a na datom projektu uz pomoć Github API-a. Pretraga se može vršiti
+pomoću filtera koji se definišu u okviru query-a. Podaci o ukupnom broju commit-ova se vraćaju
+kao odgovor (pretragu vršiti po željenom repozitorijumu). Svi zahtevi serveru se šalju preko
+browser-a korišćenjem GET metode. Ukoliko navedeni podaci za repozitorijum ne postoje,
+prikazati grešku klijentu.
+Način funkcionisanja GitHub API-a je moguće proučiti na sledećem linku:
+https://docs.github.com/en/rest?apiVersion=2022-11-28
+Primer poziva serveru: https://api.github.com/repos/OWNER/REPO/stats/contributors
+Zadatak 24:
+Kreirati Web server koji klijentu omogućava pretragu knjiga korišćenjem Open Library API-a.
+Pretraga se može vršiti pomoću filtera koji se zadaju u okviru query-a. Spisak knjiga koje
+zadovoljavaju uslov se vraćaju kao odgovor klijentu. Svi zahtevi serveru se šalju preko browsera
+korišćenjem GET metode. Ukoliko navedene knjige ne postoje, prikazati grešku korisniku.
+Način funkcionisanja Open Library API-a je moguće proučiti na sledećem linku:
+https://openlibrary.org/dev/docs/api/search
+Primer poziva serveru: https://openlibrary.org/search.json?author=tolkien&sort=new
+Zadatak 25:
+Kreirati Web server koji klijentu omogućava pretragu knjiga korišćenjem Google Books API-a.
+Pretraga se može vršiti pomoću filtera koji se zadaju u okviru query-a. Spisak knjiga koje
+zadovoljavaju uslov se vraćaju kao odgovor klijentu. Svi zahtevi serveru se šalju preko browsera
+korišćenjem GET metode. Ukoliko navedene knjige ne postoje, prikazati grešku korisniku.
+Način funkcionisanja Google Books API-a je moguće proučiti na sledećem linku:
+https://developers.google.com/books/docs/v1/getting_started
+Primer poziva serveru: https://www.googleapis.com/books/v1/volumes?q=inauthor:tolkien
+Zadatak 26:
+Kreirati Web server koji klijentu omogućava pretragu letova korišćenjem SpaceX API-a. Pretraga
+se može vršiti pomoću filtera koji se zadaju u okviru query-a. Spisak letova koji zadovoljavaju
+uslov se vraćaju kao odgovor klijentu. Svi zahtevi server se šalju preko browsera korišćenjem GET
+metode. Ukoliko navedene informacije ne postoje, prikazati grešku korisniku.
+Način funkcionisanja SpaceX API-a je moguće proučiti na sledećem linku: https://github.com/r-
+spacex/SpaceX-API
+Primer poziva serveru: https://api.spacexdata.com/v5/launches/past
+Zadatak 27:
+Kreirati Web server koji klijentu omogućava pretragu umetničkih dela korišćenjem Europeana
+API-a. Pretraga se može vršiti pomoću filtera koji se zadaju u okviru query-a. Spisak dela koja
+zadovoljavaju uslov se vraćaju kao odgovor klijentu. Svi zahtevi serveru se šalju preko browsera
+korišćenjem GET metode. Ukoliko navedene informacije ne postoje, prikazati grešku korisniku.
+Način funkcionisanja Europeana API-a je moguće proučiti na sledećem linku:
+https://europeana.atlassian.net/wiki/spaces/EF/pages/2385739812/Search+API+Documentation
+Primer poziva serveru:
+https://api.europeana.eu/record/v2/search.json?wskey=key&query=van+gogh
+Zadatak 28:
+Kreirati Web sever koji omogućava klijentu pretragu slika korišćenjem Rijks Museum Data
+Services API-a. Pretraga se može vršiti pomoću filtera koji se zadaju u okviru query-a. Spisak dela
+koja zadovoljavaju uslov se vraćaju kao odgovor klijentu. Svi zahtevi se šalju preko browsera
+korišćenjem GET metode. Ukoliko navedene informacije ne postoje, prikazati grešku korisniku.
+Način funkcionisanja Rijks Museum Data Services API-a je moguće proučiti na sledećem linku:
+https://data.rijksmuseum.nl/docs/search
+Primer poziva serveru: https://data.rijksmuseum.nl/search/collection?type=painting
+Zadatak 29:
+Kreirati Web server koji vrši brojanje reči u okviru fajla. Brojati samo reči koje imaju vise
+suglasnika nego samoglasnika. Svi zahtevi serveru se šalju preko browser-a korišćenjem GET
+metode. U zahtevu se kao parametar navodi naziv fajla. Server prihvata zahtev, pretražuje root
+folder i sve njegove podfoldere za zahtevani fajl i vrši brojanje. Ukoliko traženi fajl ne postoji,
+vratiti grešku korisniku. Takođe, ukoliko nema takvih reči, vratiti odgovarajuću poruku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 30:
+Kreirati Web server koji vrši određivanje prosečne dužine reči u okviru fajla. Svi zahtevi serveru
+se šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla.
+Server prihvata zahtev, pretražuje root folder i sve njegove podfoldere za zahtevani fajl i vrši
+izračunavanje. Ukoliko traženi fajl ne postoji, vratiti grešku korisniku. Takođe, ukoliko je reč o
+praznom fajlu, vratiti odgovarajuću poruku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 31:
+Kreirati Web server koji vrši leksikografsko sortiranje reči u okviru fajla. Svi zahtevi serveru se
+šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla.
+Server prihvata zahtev, pretražuje root folder i sve njegove podfoldere za zahtevani fajl i vrši
+sortiranje reči. Ukoliko traženi fajl ne postoji, vratiti grešku korisniku. Takođe, ukoliko je reč o
+praznom fajlu, vratiti odgovarajuću poruku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 32:
+Kreirati Web server koji vrši brojanje znakova interpunkcije u okviru fajla. Svi zahtevi serveru se
+šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar navodi naziv fajla.
+Server prihvata zahtev, pretražuje root folder i sve njegove podfoldere za zahtevani fajl i vrši
+brojanje. Ukoliko traženi fajl ne postoji, vratiti grešku korisniku. Takođe, ukoliko je reč o praznom
+fajlu, vratiti odgovarajuću poruku korisniku.
+Primer poziva serveru: http://localhost:5050/fajl.txt
+Zadatak 33:
+Kreirati Web server koji klijentu omogućava pretragu pitanja za kvizove korišćenjem Open Trivia
+Database API-a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru query-a. Spisak
+pitanja i odgovora koji zadovoljavaju uslov se vraćaju kao odgovor klijentu (pretragu vršiti po
+kategoriji i težini). Svi zahtevi serveru se šalju preko browser-a korišćenjem GET metode. Ukoliko
+navedena pitanja ne postoje, prikazati grešku klijentu.
+Primer poziva serveru:
+https://opentdb.com/api.php?amount=10&category=25&difficulty=medium
+Način funkcionisanja Open Trivia Database je moguće proučiti na sledećem linku:
+https://opentdb.com/api_config.php
+Zadatak 34:
+Kreirati Web server koji klijentu omogućava pretragu pitanja za kvizove korišćenjem Open Trivia
+Database API-a. Pretraga se može vršiti pomoću filtera koji se definišu u okviru query-a. Spisak
+pitanja, tačnih i netačnih odgovora koji zadovoljavaju uslov se vraćaju kao odgovor klijentu
+(pretragu vršiti po broju pitanja i tipu). Svi zahtevi serveru se šalju preko browser-a korišćenjem
+GET metode. Ukoliko navedena pitanja ne postoje, prikazati grešku klijentu.
+Primer poziva serveru:
+https://opentdb.com/api.php?amount=23&type=boolean
+Način funkcionisanja Open Trivia Database je moguće proučiti na sledećem linku:
+https://opentdb.com/api_config.php
+Zadatak 35:
+Kreirati Web server koji vrši brojanje reči u okviru fajla koje su anagrami zadate reči. Svi zahtevi
+serveru se šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametri navode
+naziv fajla i zadata reč. Server prihvata zahtev, pretražuje root folder i sve njegove podfoldere za
+zahtevani fajl i vrši brojanje reči koje su anagrami (sadrže ista slova kao zadata reč, ali u
+drugačijem redosledu). Ukoliko traženi fajl ne postoji, vratiti grešku korisniku. Takođe, ukoliko
+nema reči koje su anagrami, vratiti odgovarajuću poruku korisniku.
+Primer poziva serveru: http://localhost:5050/?fajl=fajl.txt&rec=sako
+Zadatak 36:
+Kreirati web server koji vrši binarizaciju slike (pretvaranje u crno-belu sliku pomoću praga). Svi
+zahtevi serveru se šalju preko browser-a korišćenjem GET metode. U zahtevu se kao parametar
+navodi naziv fajla, odnosno slike, kao i vrednost praga. Server prihvata zahtev, pretražuje root
+folder za zahtevani fajl i vrši binarizaciju — svaki piksel čija je prosečna vrednost RGB kanala
+ispod praga postaje crn (0, 0, 0), a iznad praga postaje beo (255, 255, 255). Ukoliko traženi fajl ne
+postoji, vratiti grešku korisniku.
+Primer poziva serveru: http://localhost:5050/foto.jpg?prag=128

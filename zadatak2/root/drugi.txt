@@ -1,0 +1,13 @@
+Prilikom podele poslova između niti postoje dve strategije:
+Paralelizam na nivou podataka – Kada je potrebno niz operacija izvršiti nad velikom količinom podataka, paralelizacija se vrši
+tako što veći broj niti izvršava isti niz operacija nad različitim podacima. Ovde se vrši podela podataka između različitih niti.
+Paralelizam na nivou taskova – Različite niti izvršavaju različite operacije.
+Paralelizam na nivou podataka (data parallelism) je jednostavniji kod procesora sa većim brojem jezgara jer
+eliminiše potrebu za deljenim podacima.
+Češće su situacije u kojima se javlja potreba za paralelizmom na nivou podataka pa je potencijal iskorišćenja veći.
+Paralelizam na nivou podataka se naziva strukturni paralelizam jer sve niti počinju i završavaju se na istom mestu.
+Paralelizam na nivou taskova (task parallelism) je često nestruktuiran jer se niti mogu pokretati i završavati na
+različitim mestima u aplikaciji.
+Strukturni paralelizam je jednostavniji za implementaciju, manje je podložan greškama i moguće je obezbediti
+standardnu implementaciju.
+asdf

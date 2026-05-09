@@ -87,7 +87,7 @@ namespace zadatak2
         {
             string query = context.Request.Url.AbsolutePath.TrimStart('/');
 
-            if (string.IsNullOrEmpty(query))
+            if (string.IsNullOrEmpty(query) || query == "favicon.ico")
             {
                 context.Response.Close();
                 return;
