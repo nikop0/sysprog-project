@@ -21,6 +21,7 @@ namespace zadatak2
                 {
                     if (DateTime.Now < entry.Expiry)
                     {
+                        ThreadSafeLogger.Log($"Rezultat za '{query}' pronađen u kešu.");
                         return entry.Result;
                     }
                     _cache.Remove(query);
@@ -28,10 +29,14 @@ namespace zadatak2
 
                 while (_processing.Contains(query))
                 {
+                    ThreadSafeLogger.Log($"Čeka da druga nit završi pretragu za '{query}'...");
+
                     Monitor.Wait(_lock);
                     
                     if (_cache.TryGetValue(query, out var newEntry))
                     {
+                        ThreadSafeLogger.Log($"Nit se probudila, uzima rezultat za '{query}' iz keša.");
+
                         return newEntry.Result;
                     }
                 }
@@ -41,6 +46,8 @@ namespace zadatak2
 
             try
             {
+                ThreadSafeLogger.Log($"Pretraga na disku za reč: '{query}'...");
+
                 string searchResult = searchAction();
 
                 lock (_lock)
